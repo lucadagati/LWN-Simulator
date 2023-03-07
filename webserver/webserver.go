@@ -21,7 +21,7 @@ import (
 	"github.com/rakyll/statik/fs"
 )
 
-//WebServer type
+// WebServer type
 type WebServer struct {
 	Address      string
 	Port         int
@@ -94,6 +94,7 @@ func NewWebServer(config *models.ServerConfig, controller cnt.SimulatorControlle
 		apiRoutes.POST("/add-gateway", addGateway)
 		apiRoutes.POST("/up-gateway", updateGateway)
 		apiRoutes.POST("/bridge/save", saveInfoBridge)
+		apiRoutes.POST("/new-payload", new_payload)
 
 	}
 
@@ -189,6 +190,17 @@ func updateDevice(c *gin.Context) {
 	c.BindJSON(&device)
 
 	code, err := simulatorController.UpdateDevice(&device)
+	errString := fmt.Sprintf("%v", err)
+
+	c.JSON(http.StatusOK, gin.H{"status": errString, "code": code})
+
+}
+
+func new_payload(c *gin.Context) {
+
+	var nuovoPayload socket.NewPayload
+
+	code, err := simulatorController.ChangePayload(nuovoPayload)
 	errString := fmt.Sprintf("%v", err)
 
 	c.JSON(http.StatusOK, gin.H{"status": errString, "code": code})
